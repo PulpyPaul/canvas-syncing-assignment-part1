@@ -6,8 +6,45 @@
         "use strict";
     
     </script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        let socket;
+
+        const init = () => {
+            socket = io.connect();
+            setupSocket();
+            console.log("Loaded!");
+            setInterval(sendMessage, 3000);
+        }
+        
+        const setupSocket = () => {
+            socket.on('updatePara', (data) => {
+                console.log(data);
+                const message = data.message;
+                document.querySelector("#myPara").innerHTML = message;
+            });
+            
+            socket.on('clearPara', (data) => {
+                document.querySelector("#myPara").innerHTML = "";
+            });
+        }
+        
+        let myNum = 0;
+
+        const sendMessage = () => {
+            myNum += 5;
+            
+            let messageData = {
+                message: myNum
+            };
+            
+            socket.emit('msgToServer', messageData);
+        }
+
+        window.onload = init;
+    </script>
 </head>
 <body>
-
+    <p id="myPara">Data should update here!</p>
 </body>
 </html>
